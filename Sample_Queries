@@ -1,0 +1,70 @@
+--Sample Queries
+--The queries listed below are examples of potential uses of our database. We have also provided additional outputs are included in .lst files externally from this report.
+
+
+-- Query 1:
+-- “List the total number of  orgs listed as a co sponsor”     
+SELECT COUNT(DISTINCT Organization_ID) AS Total_Event_Cosponsors
+FROM Organization_Role
+WHERE Organization_Type = 'Event Cosponsor';            
+
+-- Query 2:
+-- “Find all the items associated with the Project named 'ArtNight Pasadena at the Armor”                                                                                                                 
+SELECT UNIQUE E.EXHIBITION_ID,P.PROJECT_NAME, E.EXHIBITION_TYPE,I.ITEM_ID, I.ITEM_NAME, I.DESCRIPTION  
+FROM EXHIBITION E, PROJECT_ITEM PI, ITEM I, PROJECT P
+WHERE E.EXHIBITION_ID = PI.PROJECT_ID AND PI.ITEM_ID = I.ITEM_ID AND E.EXHIBITION_ID = P.PROJECT_ID AND P.PROJECT_NAME = 'ArtNight Pasadena at the Armory';
+
+-- Query 3:
+-- “List the details of the org associated with the artwork named Digital Dream”
+SELECT Organizations.Organization_Name, Organizations.Street_Address, Zip_Code.City, Zip_Code.State
+FROM Organizations
+JOIN Organization_Role ON Organizations.Organization_ID = Organization_Role.Organization_ID
+JOIN ArtWork_Organization ON Artwork_Organization.OrganizationRole_ID = Organization_Role.OrganizationRole_ID
+JOIN Zip_Code ON Organizations.Zip = Zip_Code.Zip
+JOIN Art_Work ON ArtWork_Organization.ArtWork_ID = Art_Work.ArtWork_ID
+WHERE Art_Work.Name = 'Digital Dream' ;
+
+-- Query 4:
+-- “List all people involved in Cityscapes and Soundwaves Exhibition’ and their roles”
+SELECT p.First_Name, p.Last_Name, PR.PersonType
+FROM Person p, Person_Role PR, Project_personnel PP, project proj
+WHERE p.Person_ID = PR.Person_ID
+AND PR.PersonRole_ID = PP.PersonRole_ID
+AND PP.Project_ID = proj.Project_ID
+AND proj.Project_Name = 'Cityscapes and Soundwaves'; 
+
+-- Query 5:
+-- “Find items associated with people”
+SELECT UNIQUE P.PERSON_ID,P.FIRST_NAME,P.LAST_NAME, I.ITEM_ID, I.ITEM_NAME, I.DESCRIPTION
+FROM ITEM I, PERSON P, PERSON_ITEM PI
+WHERE I.ITEM_ID = PI.ITEM_ID AND PI.PERSON_ID = PI.PERSON_ID;
+
+-- Query 6:
+-- “Find items associated with organizations”
+SELECT UNIQUE O.ORGANIZATION_ID,O.ORGANIZATION_NAME,I.ITEM_ID, I.ITEM_NAME, I.DESCRIPTION
+FROM ORGANIZATIONS O, ORGANIZATION_ITEM OI, ITEM I
+WHERE O.ORGANIZATION_ID = OI.ORGANIZATION_ID AND OI.ITEM_ID = I.ITEM_ID;
+
+-- Query 7:
+-- “Find items associated with projects”
+SELECT UNIQUE P.PROJECT_ID,P.PROJECT_NAME,I.ITEM_ID, I.ITEM_NAME, I.DESCRIPTION
+FROM PROJECT P, PROJECT_ITEM PI, ITEM I
+WHERE P.PROJECT_ID = PI.PROJECT_ID AND PI.ITEM_ID = I.ITEM_ID;
+
+-- Query 8:
+-- “Find items associated with exhibitions”
+SELECT UNIQUE E.EXHIBITION_ID,P.PROJECT_NAME, E.EXHIBITION_TYPE,I.ITEM_ID, I.ITEM_NAME, I.DESCRIPTION
+FROM EXHIBITION E, PROJECT_ITEM PI, ITEM I, PROJECT P
+WHERE E.EXHIBITION_ID = PI.PROJECT_ID AND PI.ITEM_ID = I.ITEM_ID AND E.EXHIBITION_ID = P.PROJECT_ID;
+
+-- Query 9:
+-- “Find items associated with events”
+SELECT UNIQUE E.EVENT_ID,P.PROJECT_NAME, E.EVENT_TYPE,I.ITEM_ID, I.ITEM_NAME, I.DESCRIPTION
+FROM EVENT E, PROJECT_ITEM PI, ITEM I, PROJECT P
+WHERE E.EVENT_ID = PI.PROJECT_ID AND PI.ITEM_ID = I.ITEM_ID AND E.EVENT_ID = P.PROJECT_ID;
+
+-- Query 10:
+-- “Find items associated with artwork”
+SELECT UNIQUE A.ARTWORK_ID,A.NAME, A.DESCRIPTION, A.MEDIUM ,I.ITEM_ID, I.ITEM_NAME, I.DESCRIPTION
+FROM ART_WORK A, ARTWORK_ITEM AI, ITEM I
+WHERE A.ARTWORK_ID = AI.ARTWORK_ID AND AI.ITEM_ID = I.ITEM_ID;
