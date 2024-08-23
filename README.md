@@ -1,6 +1,7 @@
 # SQL-Archives-Database
-The main functions of this database are centered around ensuring data storage, entry and retrieval, as the Armory Center for the Arts aims to transition their exhibition archives digitally. 
-Executive Summary
+Click on this link to view original documentation ["Original Documentation"](https://docs.google.com/document/d/17nGZ2ROqZC_ZvXOp6IJWhaSnX0Zsm5z9U2fXrJm-KVo/edit?usp=sharing)
+
+## Executive Summary
 
 The relational data model developed through SQL is aimed to simplify the storage and retrieval of data from the Armory Center for the Arts in Pasadena, California. The Armory Center for the Arts, previously known as the Pasadena Art Museum opened its doors in 1947. For nearly eight decades the Armory has hosted the work of local and distinguished artists and provided a space for the residents of Pasadena and the greater Los Angeles area. The Armory Center’s mission is,  “to nurture our community and its young people by creating, learning, and presenting art to advance equity and social justice. We envision joyful, healthy, and equitable communities shaped by imagination, creativity, and diverse voices.” The Armory Center has been an active member of their local community and has partnered with organizations that are committed to promoting youth interest in fine arts. 
 
@@ -10,13 +11,13 @@ The main functions of this database are centered around ensuring data storage, e
 
 The goal of this project was to reorganize the relational model of the physical data logging system previously used to a more efficient data model that is not based on arbitrary conventions like a traditional filing structure. For example, if an artist participated in multiple exhibitions at the Armory Center, the files would be held in separate folders and likely separate boxes, requiring an employee or patron with the knowledge of both exhibits to accurately track the artist’s exhibition history. With our new SQL database, a user could simply use the name of the artist to find all the exhibitions they participated in. Our team thoughtfully crafted a first iteration of the database for the Armory Center optimizing for data storage about exhibits, events and artists who the Armory Center has recorded their connection with.
 
-# Planning for the Database: Practical Database Development
+## Planning for the Database: Practical Database Development
 
 To determine the scope for this project our team visited the Armory Center to view their archives. We also spoke to current employees to understand their essential business functions and deepen our understanding of typical art industry jargon. When analyzing their archives we carefully looked at the types of information they stored identifying what kinds of attributes would be necessary for the entities we created and how the entities should relate to each other based on the business rules we observed. The Armory Center for the Arts has been open for decades and has hosted hundreds of exhibitions with thousands of artists. In addition to their exhibitions, the Armory Center hosts events and classes. 
 
 To best prepare for modeling our database we created a function versus entity chart to anticipate which entities would be needed for the functions we wanted to have in our database. This exercise allowed us to grasp the nature of the relationships we plan to build in SQL. This chart also identified the most important entities to our model and potential integrity constraints we should consider when getting to the more advanced stages of design. 
 
-# Conceptual Design
+## Conceptual Design
 
 ## ERD
 Our entity relationship diagrams are interpretations of the current physical archive at the Armory Center for Arts. Below we have provided images of the physical user views. In some cases our entity relationship diagrams represent a synthesized interpretation of the Armory Center’s available user views to better translate into SQL formatting.
@@ -38,7 +39,7 @@ Here we would like to highlight some definitions relating to the entities and at
 ## Domain Definitions
 There are a few different domain classifications within our database. Many of the primary keys of our entities like Artwork_ID, Box_ID, Item_ID and Person_ID will be a number domain. Other attributes that are descriptors or contain personal data are likely variable-length character string (varchar2) domain. This would include attributes like Person(First_Name) and Medium(Description). The other domain frequently used in this database is date. This is included in entities like Item and Project that both have Start_Date and End_Date attributes.
 
-# Logical Design with the Relational Model
+## Logical Design with the Relational Model
 Third Normal Form Statements (3NFs)
 Key: primary key, not null, foreign key, Unique, Subclass Alias, Check Statements
 ```
@@ -81,18 +82,18 @@ Artwork_Personnel (ArtWork_ID, PersonRole_ID, Description)
 Project_Personnel (PersonRole_ID, Project_ID, Description)
 Our third normal form statements have noted particular entities that require additional check statements in the physical implementation of our design in order to protect the integrity of the data. These will enforce basic business rules like ensuring the start date of a project is before the end date of a project. In our key, all primary keys are assumed to be unique so they are not additionally labeled in red font. To be clear about the naming convention of our attributes we also noted the instances when a subclass’ primary key (which is the same as its superclass primary key) is named with an ‘alias’ that may fit better with the subclass entity’s naming convention. 
 ```
-# Physical Design and Implementation with the Relational Model
+## Physical Design and Implementation with the Relational Model
 
 Process versus Entity Matrix
 The process versus entity matrix represents our analysis of the anticipated usage of our database, measuring the creates, reads, updates and deletes of each entity based on the processes that will occur in the database. I have provided a link to the excel sheet for our process versus entity matrix.
 
 
-# Transaction Analysis Forms
+## Transaction Analysis Forms
 Our transaction analysis forms are used to track each entity affected by a particular function modeled in our database. Each entity included in the form has a particular action tied to it (create, update, read or delete) and an estimated number of times this action occurs per transaction. These numbers are then multiplied by the peak number of transactions (estimated by our team) to find the total number of references per period. Below is a sample TAF for creating an item stored in a folder. All of our transaction analysis forms can be found using this link.
 
 This composite usage map combines the transaction analysis forms we created to indicate the anticipated usage of each entity in relation to the processes we highlighted. Each entity has numbers indicating the total number of hits, its percentage of database hits and CUD/CRUD ratio.
 
-# Summary and Conclusions
+## Summary and Conclusions
 
 Our final data model aims to simplify the process of entering and retrieving data for the Armory Center for the Arts. Due to the database’s archival nature, we anticipate that the majority of the usage of this database will be for reads. The architecture of our database is structured to best support the expected usage behaviors. 
 
