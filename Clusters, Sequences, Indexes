@@ -1,0 +1,239 @@
+–CLUSTER STATEMENTS
+CREATE CLUSTER Person_Cluster (Person_ID NUMBER(10));
+CREATE INDEX Person_Cluster_Index on cluster Person_Cluster;
+CLUSTER Person_Cluster(Person_ID)
+
+CREATE CLUSTER Project_Cluster (Project_ID NUMBER(10));
+CREATE INDEX Exhibition_Cluster_Index on cluster Exhibition_Cluster;
+CLUSTER Exhibition_Cluster(Exhibition_ID)
+
+CREATE CLUSTER Organization_Cluster (Organization_ID NUMBER(10));
+CREATE INDEX Organization_Cluster_Index on cluster Organization_Cluster;
+CLUSTER Organization_Cluster(Organization_ID)
+
+CREATE CLUSTER Item_Cluster (Item_ID NUMBER(10));
+CREATE INDEX Item_Cluster_Index on cluster Item_Cluster;
+CLUSTER Item_Cluster(Item_ID)
+
+CREATE CLUSTER Container_Cluster (Container_ID NUMBER(10));
+CREATE INDEX Container_Cluster_Index on cluster Container_Cluster;
+CLUSTER Container_Cluster(Container_ID)
+
+CREATE CLUSTER Container_Cluster (Container_ID NUMBER(10));
+CREATE INDEX Container_Cluster_Index on cluster Container_Cluster;
+CLUSTER Container_Cluster(Container_ID)
+
+
+–SEQUENCE STATEMENTS
+CREATE SEQUENCE Person_ID increment by 1 start with 1;
+CREATE SEQUENCE Project_ID increment by 1 start with 1;
+CREATE SEQUENCE Organization_ID increment by 1 start with 1;
+CREATE SEQUENCE Item_ID increment by 1 start with 1;
+CREATE SEQUENCE Container_ID increment by 1 start with 1;
+
+CREATE SEQUENCE ArtWork_ID increment by 1 start with 1;
+CREATE SEQUENCE Folder_ID increment by 1 start with 1;
+CREATE SEQUENCE Event_ID increment by 1 start with 1;
+CREATE SEQUENCE OrganizationRole_ID increment by 1 start with 1;
+CREATE SEQUENCE PersonRole_ID increment by 1 start with 1;
+
+
+-INDEX STATEMENTS
+CREATE INDEX Artwork_medium_ix on Art_work(Medium);
+
+CREATE INDEX Box_Archive_Date_ix on Box(Archive_Date);
+
+CREATE INDEX Cabinet_Loc_Cabinet_ID_ix on Cabinet_Location(Cabinet_ID);
+
+CREATE INDEX Cont_Container_type_ix on Container(ContainerType);
+
+CREATE INDEX Org_name_ix on Organizations(Organization_Name);
+
+CREATE INDEX pers_LN_ix on Person(Last_Name);
+
+CREATE INDEX folder_folder_cont_ix on Folder(Folder_Content);
+
+CREATE INDEX item_type_ix on Item(Item_Type);
+CREATE INDEX item_Classification on Item(Item_Classification);
+
+CREATE INDEX project_type_ix on Project(ProjectType);
+
+CREATE INDEX exhibit_type_ix on Exhibition(Exhibition_Type);
+
+CREATE INDEX person_role_id_ix on Person_Role(Person_id);
+CREATE INDEX person_role_type_ix on Person_Role(PersonType);
+
+CREATE INDEX event_type_ix on Event(Event_Type);
+
+CREATE INDEX foldered_item_folder_ix on Foldered_Item(Folder_ID);
+
+CREATE INDEX proj_art_art_ix on Project_ArtWork(ArtWork_ID);
+
+CREATE INDEX org_role_org_id_ix on Organization_Role(Organization_ID);
+
+
+- TRIGGER STATEMENTS
+
+CREATE OR REPLACE TRIGGER Project_Event_Check
+BEFORE INSERT OR UPDATE ON Event
+FOR EACH ROW
+DECLARE
+v_ProjectType NUMBER(10);
+BEGIN
+
+SELECT ProjectType 
+INTO v_ProjectType 
+FROM PROJECT
+WHERE :NEW.Event_ID = Project_ID;
+
+IF v_ProjectType <> 'Event' THEN
+ RAISE_APPLICATION_ERROR(-20001, 'Project Subtype must equal ''Event'' to be inserted into the Event Table');
+
+	END IF;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20002, 'Invalid Project_ID.');
+END;
+
+
+
+
+
+-- Project-Exhibition Trigger
+-- Everytime an insert is made on the exhibition table, oracle will check its superclass Project to see if the ProjectType == ‘Event’ , if not it will throw an error. If nothing is found, that means the event_id does not have a corresponding project_id. 
+
+CREATE OR REPLACE TRIGGER Project_Exhibition_Check
+BEFORE INSERT OR UPDATE ON Exhibition
+FOR EACH ROW
+DECLARE
+v_ProjectType NUMBER(10);
+BEGIN
+
+SELECT ProjectType 
+INTO v_ProjectType 
+FROM PROJECT
+WHERE :NEW.Exhibition_ID = Project_ID;
+
+IF v_ProjectType <> 'Exhibition' THEN
+ RAISE_APPLICATION_ERROR(-20001, 'Project Subtype must equal ''Exhibition'' to be inserted into the Event Table');
+
+	END IF;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20002, 'Invalid Project_ID.');
+END; 
+
+
+
+
+
+--Container Subclass Enforcement
+--These Triggers will ensure that if something is in the Project Container there will be no duplicate subclass instances found within these subclass tables[Box, Filing_Cabinet]
+--Container-Box Trigger
+--Every time an insert is made on the Box table, oracle will check its superclass Container to see if ContainerType == ‘Box’ , if not it will throw an error. If nothing is found, that means the Box_id does not have a corresponding Container_id, and an error will be thrown. 
+
+CREATE OR REPLACE TRIGGER Container_Box_Check
+BEFORE INSERT OR UPDATE ON Box
+FOR EACH ROW
+DECLARE
+v_ContainerType Varchar2(50);
+BEGIN
+
+SELECT ContainerType 
+INTO v_ContainerType 
+FROM Container
+WHERE :NEW.Box_ID = Container_ID;
+
+IF v_ContainerType <> 'Cardboard_Box' THEN
+ RAISE_APPLICATION_ERROR(-20002, 'Box Superclass Attribute ContainerType must equal ''Cardboard_Box'' to be inserted into the Box Table');
+
+	END IF;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20002, 'Invalid Container_ID.');
+END; 
+
+
+
+
+
+
+
+
+--Container-Cabinet Trigger
+--Every time an insert is made on the Filing_Cabinet table, oracle will check its superclass Container to see if ContainerType == ‘Filing_Cabinet’ , if not it will throw an error. If nothing is found, that means the Box_id does not have a corresponding Container_id, and an error will be thrown. 
+CREATE OR REPLACE TRIGGER Container_Cabinet_Check
+BEFORE INSERT OR UPDATE ON Filing_Cabinet
+FOR EACH ROW
+DECLARE
+v_ContainerType Varchar2(50);
+BEGIN
+
+SELECT ContainerType 
+INTO v_ContainerType 
+FROM Container
+WHERE :NEW.Cabinet_ID = Container_ID;
+
+IF v_ContainerType <> 'Box' THEN
+ RAISE_APPLICATION_ERROR(-20002, 'Container Superclass Attribute ContainerType must equal ''Filing_Cabinet'' to be inserted into the Cabinet Table');
+
+	END IF;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20002, 'Invalid Container_ID.');
+END; 
+
+--Item_Foldered Trigger
+create or replace TRIGGER Item_Foldered_Item_Check
+BEFORE INSERT OR UPDATE ON Foldered_Item
+FOR EACH ROW
+DECLARE
+v_IN_FOLDER Varchar2(1);
+BEGIN
+
+SELECT IN_FOLDER 
+INTO v_IN_FOLDER 
+FROM Item
+WHERE :NEW.Item_ID = Item_ID;
+
+IF v_IN_FOLDER = 'No' THEN
+ RAISE_APPLICATION_ERROR(-20002, 'Item is marked as folderless, you are trying to make the item foldered, either change the ''IN_FOLDER'' status in the ''Item'' Table to ''N'' or insert into the folderless_item table');
+
+	END IF;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20002, 'ItemID missing from Item Table');
+END; 
+
+
+
+
+
+
+
+
+
+
+--Item_Folderless Trigger
+create or replace TRIGGER Item_Folderless_Item_Check
+BEFORE INSERT OR UPDATE ON Folderless_Item
+FOR EACH ROW
+DECLARE
+v_IN_FOLDER Varchar2(1);
+BEGIN
+
+SELECT IN_FOLDER 
+INTO v_IN_FOLDER 
+FROM Item
+WHERE :NEW.Item_ID = Item_ID;
+
+IF v_IN_FOLDER = 'Yes' THEN
+ RAISE_APPLICATION_ERROR(-20002, 'Item is marked as in a folder, you are trying to make the item folderless, either change the in folder status or insert into the foldered_item table');
+
+	END IF;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20002, 'ItemID missing from Item Table');
+END; 
+
+
