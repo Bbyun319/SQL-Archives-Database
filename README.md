@@ -30,11 +30,10 @@ User View Example \#1
 ![](images\uv1.png)
 
 User View Example \#2  
-
 ![](images\uv2.png)
+
 User View Example \#3  
 ![](images\uv3.png)
-
 
 User View Example \#4  
 ![](images\uv4.png)
