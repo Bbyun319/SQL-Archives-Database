@@ -18,7 +18,7 @@ To determine the scope for this project our team visited the Armory Center to vi
 To best prepare for modeling our database we created a function versus entity chart to anticipate which entities would be needed for the functions we wanted to have in our database. This exercise allowed us to grasp the nature of the relationships we plan to build in SQL. This chart also identified the most important entities to our model and potential integrity constraints we should consider when getting to the more advanced stages of design. 
 
 ## Conceptual Design
-
+![UV4](https://keep.google.com/u/0/media/v2/1t4xKA67LuaCqfU0Xv4XFKo44DgELaJtOdwvImS1aeGPrSnPjrIzqCsKFbMl0Lg/1wQCxfom73QIxHsNtKSCAF34PVMs1-Q0XhlHQcdhX4HCPMKT1EAkhF20WF1Mt5w?sz=512&accept=image%2Fgif%2Cimage%2Fjpeg%2Cimage%2Fjpg%2Cimage%2Fpng%2Cimage%2Fwebp)
 ## ERD
 Our entity relationship diagrams are interpretations of the current physical archive at the Armory Center for Arts. Below we have provided images of the physical user views. In some cases our entity relationship diagrams represent a synthesized interpretation of the Armory Center’s available user views to better translate into SQL formatting.
 
