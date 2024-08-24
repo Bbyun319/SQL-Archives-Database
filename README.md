@@ -21,7 +21,7 @@ To determine the scope for this project our team visited the Armory Center to vi
 
 To best prepare for modeling our database we created a [function versus entity chart](https://docs.google.com/spreadsheets/d/1HDg3VvOAA6XPOCXYRCrJhA6\_TsmI\_5-gZTCut6QnQDg/edit?usp=sharing) to anticipate which entities would be needed for the functions we wanted to have in our database. This exercise allowed us to grasp the nature of the relationships we plan to build in SQL. This chart also identified the most important entities to our model and potential integrity constraints we should consider when getting to the more advanced stages of design. 
 
-![image1](images/functionvsentity.png)
+![image1](images\functionvsentity.png)
 
 **Conceptual Design**
 
