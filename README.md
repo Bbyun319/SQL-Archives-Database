@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-
-
 Ben Byun, Peter Ma, Naomi Poe  
 December 7, 2023
 
